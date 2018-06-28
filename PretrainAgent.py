@@ -51,7 +51,7 @@ class PretrainAgent(SingleAgent.Agent):
                 # print(self.actor.predict([np.array(image_vectors), np.array(decoder_input)]))
 
             if no is not 0 and no % 1000 == 0:
-                print(str(no)+' samples have been created')
+                print(str(len(image_vectors))+' samples have been created')
 
             if no is not 0 and no % data_partition == 0:
                 decoder_target = preprocessing.sequence.pad_sequences(decoder_target, maxlen=SENTENCE_LENGTH, dtype='int16', padding='post', truncating='post', value=0)
@@ -65,8 +65,8 @@ class PretrainAgent(SingleAgent.Agent):
                 save_load_utils.save_all_weights(self.actor, './save_model/actor_Seq2seq.model')
 
                 #Test
-                k = 5
-                random_image_ids = random.choices(self.list_of_ids, k = k)
+                k = 10
+                random_image_ids = random.sample(self.list_of_ids, k = k)
 
                 test_image_vectors = np.array([self.id_to_vector_dict[image_id] for image_id in random_image_ids])
 
