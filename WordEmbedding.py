@@ -38,20 +38,20 @@ class EmbeddingModel():
                         return_list.append(np.ones(self.embedding_size) - 0.8)
                     continue
 
-                if '-' in word:
-                    words = re.split('-', word)
-
-                    for w in words:
-                        if w.lower() in self.w2v_model.vocab:
-                            return_list.append(self.w2v_model[w.lower()])
-                            continue
-                        word_without_punctuation = re.sub(r'[^\w\s]', '', w)
-                        if word_without_punctuation.lower() in self.w2v_model.vocab:
-                            return_list.append(self.w2v_model[word_without_punctuation.lower()])
-                            continue
-                        return_list.append(np.ones(self.embedding_size) - 2)
-                        not_known_words.append(w.lower())
-                    continue
+                # if '-' in word:
+                #     words = re.split('-', word)
+                #
+                #     for w in words:
+                #         if w.lower() in self.w2v_model.vocab:
+                #             return_list.append(self.w2v_model[w.lower()])
+                #             continue
+                #         word_without_punctuation = re.sub(r'[^\w\s]', '', w)
+                #         if word_without_punctuation.lower() in self.w2v_model.vocab:
+                #             return_list.append(self.w2v_model[word_without_punctuation.lower()])
+                #             continue
+                #         return_list.append(np.ones(self.embedding_size) - 2)
+                #         not_known_words.append(w.lower())
+                #     continue
 
                 word_without_punctuation = re.sub(r'[^\w\s]', '', word)
                 if word_without_punctuation.lower() in self.w2v_model.vocab:
@@ -79,26 +79,26 @@ class EmbeddingModel():
                         return_list.append(np.ones(self.embedding_size) - 0.8)
                     continue
 
-                if '-' in word:
-                    words = re.split('-', word)
-
-                    for w in words:
-                        if w in self.w2v_model.vocab:
-                            return_list.append(self.w2v_model[w])
-                            continue
-                        if w.lower() in self.w2v_model.vocab:
-                            return_list.append(self.w2v_model[w.lower()])
-                            continue
-                        word_without_punctuation = re.sub(r'[^\w\s]', '', w)
-                        if word_without_punctuation in self.w2v_model.vocab:
-                            return_list.append(self.w2v_model[word_without_punctuation])
-                            continue
-                        if word_without_punctuation.lower() in self.w2v_model.vocab:
-                            return_list.append(self.w2v_model[word_without_punctuation.lower()])
-                            continue
-                        return_list.append(np.ones(self.embedding_size) - 2)
-                        not_known_words.append(w.lower())
-                    continue
+                # if '-' in word:
+                #     words = re.split('-', word)
+                #
+                #     for w in words:
+                #         if w in self.w2v_model.vocab:
+                #             return_list.append(self.w2v_model[w])
+                #             continue
+                #         if w.lower() in self.w2v_model.vocab:
+                #             return_list.append(self.w2v_model[w.lower()])
+                #             continue
+                #         word_without_punctuation = re.sub(r'[^\w\s]', '', w)
+                #         if word_without_punctuation in self.w2v_model.vocab:
+                #             return_list.append(self.w2v_model[word_without_punctuation])
+                #             continue
+                #         if word_without_punctuation.lower() in self.w2v_model.vocab:
+                #             return_list.append(self.w2v_model[word_without_punctuation.lower()])
+                #             continue
+                #         return_list.append(np.ones(self.embedding_size) - 2)
+                #         not_known_words.append(w.lower())
+                #     continue
 
                 word_without_punctuation = re.sub(r'[^\w\s]', '', word)
                 if word_without_punctuation in self.w2v_model.vocab:
