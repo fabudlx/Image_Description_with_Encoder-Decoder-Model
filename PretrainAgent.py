@@ -40,7 +40,7 @@ class PretrainAgent(SingleAgent.Agent):
                         sentence_as_integer_list.append(self.word_to_integer_dict[word])
                     else:
                         sentence_as_integer_list.append(len(self.word_to_integer_dict) - 1) #UNKNOWN
-                    sentence_as_integer_list.append(len(self.word_to_integer_dict) - 2) #END
+                sentence_as_integer_list.append(len(self.word_to_integer_dict) - 2) #END
 
                 sentence_as_hot_one_encoding = to_categorical(sentence_as_integer_list, num_classes=len(self.integer_to_word_dict))
 
