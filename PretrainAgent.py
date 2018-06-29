@@ -65,7 +65,7 @@ class PretrainAgent(SingleAgent.Agent):
                 save_load_utils.save_all_weights(self.actor, './save_model/actor_Seq2seq.model')
 
                 #Test
-                k = 10
+                k = 30
                 random_image_ids = random.sample(self.list_of_ids, k = k)
 
                 test_image_vectors = np.array([self.id_to_vector_dict[image_id] for image_id in random_image_ids])
