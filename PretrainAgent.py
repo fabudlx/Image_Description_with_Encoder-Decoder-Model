@@ -22,7 +22,7 @@ class PretrainAgent(SingleAgent.Agent):
         self.word_to_integer_dict = {value: key for key, value in self.integer_to_word_dict.items()}
         self.agent_type = 'pretrain'
 
-    def pretrain(self, data_partition = 10000, batch_size = 64, epochs = 20):
+    def pretrain(self, data_partition = 10000, batch_size = 64, epochs = 30):
 
         image_vectors, decoder_input, decoder_target = [], [], []
 
