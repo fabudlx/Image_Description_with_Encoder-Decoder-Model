@@ -7,7 +7,7 @@ import Training
 
 # global variables for threading
 EMBEDDING_SIZE = 300
-SENTENCE_LENGTH = 22
+SENTENCE_LENGTH = 16
 FREQUENCY_OF_WORDS_NEEDED = 8
 
 SENTENCE_START_SYMBOL = '*S*'
@@ -45,10 +45,10 @@ class Agent:
 
 
 if __name__ == "__main__":
-    name = "Gradient_Policy_Pretrain_Test"
-    train_dataset = 'val'
+    name = "Img2SeqTest01"
+    train_dataset = 'train'
     val_dataset = 'val'
-    w2vModel = 2
+    w2vModel = 0
 
     agent = Agent(name, train_dataset, val_dataset, w2vModel)
 
