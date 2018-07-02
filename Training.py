@@ -16,7 +16,7 @@ class Training():
         self.integer_to_word_dict = loaded_data.integer_to_word_dict
         self.word_to_integer_dict = {value: key for key, value in self.integer_to_word_dict.items()}
 
-    def train(self, data_partition=100, batch_size=64, epochs=3):
+    def train(self, data_partition=10000, batch_size=64, epochs=35):
 
         image_vectors, decoder_input, decoder_target = [], [], []
 
