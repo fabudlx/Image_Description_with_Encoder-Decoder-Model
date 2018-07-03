@@ -65,8 +65,10 @@ class LoadData:
                 id_to_image_vector_dict = pickle.loads(file.read())
             with open(path_caption_dict, 'rb') as file:
                 id_to_caption_dict = pickle.loads(file.read())
+            print('Caption and ImageVector dict found and loaded')
 
         else:
+            print('Caption and ImageVector dict NOT found. They will be created and saved now.')
             id_to_image_vector_dict, id_to_caption_dict = create_captions_and_image_vectors(dataset=dataset)
 
         return id_to_image_vector_dict, id_to_caption_dict

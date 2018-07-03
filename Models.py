@@ -1,10 +1,9 @@
 from keras import Input
 from keras.engine import Model
-from keras.layers import LSTM, Dense, Dropout,merge,TimeDistributed,RepeatVector, multiply, dot, Activation, concatenate, BatchNormalization
+from keras.layers import LSTM, Dense, Dropout,TimeDistributed,RepeatVector, concatenate
+from keras.utils import plot_model
 
 
-# approximate policy and value using Neural Network
-# actor -> state is input and probability of each action is output of network
 def build_actor_model(state_space, action_size, image_vector_size):
 
     image_input = Input(shape=(image_vector_size,))
@@ -36,6 +35,11 @@ def build_actor_model(state_space, action_size, image_vector_size):
     model = Model([image_input, sentence_input], activation)
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
     model.summary()
 
     return model
+
+def plot_model():
+    model = build_actor_model([16,300], 7820, 4096)
+    plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=False)
