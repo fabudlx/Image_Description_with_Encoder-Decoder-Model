@@ -97,7 +97,7 @@ class LoadData:
 
     def get_id_to_embedded_captions(self, folder, w2v_model_name, dataset):
 
-        path = folder + '/id_to_embedded_captions_' + w2v_model_name + '_' + dataset + '_' + self.sentence_length + '_' + self.embedding_size + '.dict'
+        path = folder + '/id_to_embedded_captions_' + w2v_model_name + '_' + dataset + '_' + str(self.sentence_length) + '_' + str(self.embedding_size) + '.dict'
 
         if os.path.isfile(path):
             print('Found ID_to_Embedding file '+path+'\nLoading file now!')
