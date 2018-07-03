@@ -11,7 +11,7 @@ SENTENCE_LENGTH = 16
 FREQUENCY_OF_WORDS_NEEDED = 8
 
 SENTENCE_START_SYMBOL = '*S*'
-SENTECEN_END_SYMBOL = '*E*'
+SENTENCE_END_SYMBOL = '*E*'
 UNKNOWN_SYMBOL = 'ukn'
 
 
@@ -33,9 +33,13 @@ class Agent:
 
 
     def train_model(self, minibatch = 128, epochs = 20):
-        agent = Training.Training(self.actor, self.loaded_data)
-        agent.train()
-        save_load_utils.save_all_weights(self.actor, './save_model/actor_' + self.name + '.model')
+        trainer = Training.Training(self.actor, self.loaded_data, self.name)
+        trainer.train()
+        save_model(self.actor, 'actor_' + self.name)
+
+    def validate_model(self, k = 30):
+        validator = Training.Training(self.actor, self.loaded_data, self.name)
+        validator.validate(k)
 
 
     def load_actor(self, path):
@@ -43,6 +47,8 @@ class Agent:
             save_load_utils.load_all_weights(self.actor, path)
             print('Weights from old actor model found and loaded')
 
+def save_model(model, name):
+    save_load_utils.save_all_weights(model, './save_model/' + name + '.model')
 
 if __name__ == "__main__":
     name = "Img2SeqTest01"
@@ -52,7 +58,7 @@ if __name__ == "__main__":
 
     agent = Agent(name, train_dataset, val_dataset, w2vModel)
 
-    # global_agent.load_actor(r'./save_model/actor_only_pretrain_A3C_Test.model')
-    # global_agent.load_actor('./save_model/A3C_Test_actor.model')
+    agent.load_actor(r'./save_model/actor_Seq2seq.model')
 
-    agent.train_model()
+    # agent.train_model()
+    agent.validate_model()

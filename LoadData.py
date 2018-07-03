@@ -5,7 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 from collections import defaultdict
 from WordEmbedding import EmbeddingModel
 
-from Img2SeqMain import SENTECEN_END_SYMBOL, SENTENCE_START_SYMBOL, UNKNOWN_SYMBOL
+from Img2SeqMain import SENTENCE_END_SYMBOL, SENTENCE_START_SYMBOL, UNKNOWN_SYMBOL
 
 
 def load_w2v(model_name, embedding_size):
@@ -74,7 +74,7 @@ class LoadData:
         integer_encoded = label_encoder.fit_transform(list_of_words)
         integer_to_word_dict = dict(zip(integer_encoded, list_of_words))
         integer_to_word_dict[len(integer_to_word_dict)] = SENTENCE_START_SYMBOL #len(integer_to_word_dict) -3
-        integer_to_word_dict[len(integer_to_word_dict)] = SENTECEN_END_SYMBOL #len(integer_to_word_dict) -2
+        integer_to_word_dict[len(integer_to_word_dict)] = SENTENCE_END_SYMBOL #len(integer_to_word_dict) -2
         integer_to_word_dict[len(integer_to_word_dict)] = UNKNOWN_SYMBOL #len(integer_to_word_dict) -1
 
         print("Corpus contains " + str(len(all_captions)) + " sentences.\n")

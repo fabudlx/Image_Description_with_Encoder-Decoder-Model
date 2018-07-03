@@ -7,10 +7,11 @@ from keras_contrib.utils import save_load_utils
 import nltk.translate.bleu_score
 
 class Training():
-    def __init__(self, actor, loaded_data):
+    def __init__(self, actor, loaded_data, name):
 
         self.actor = actor
         self.loaded_data = loaded_data
+        self.name = name
 
         #dictionary mapping either words to interger values or vice-versa
         self.integer_to_word_dict = loaded_data.integer_to_word_dict
@@ -56,9 +57,8 @@ class Training():
 
                 with open('./save_graph/seq2seq_scores_'+str(no)+'.bin', 'wb') as result_dict:
                     pickle.dump(history_callback.history, result_dict)
-                save_load_utils.save_all_weights(self.actor, './save_model/actor_Seq2seq.model')
+                save_load_utils.save_all_weights(self.actor, './save_model/actor_'+self.name+'.model')
 
-                self.validate(k=30)
 
     def validate(self, k):
         # Test
@@ -81,12 +81,15 @@ class Training():
 
         sentences_cut_after_eos = []
         for sentence in predicted_sentences_as_words:
-            if Img2SeqMain.SENTECEN_END_SYMBOL in sentence:
-                sentences_cut_after_eos.append(sentence[:sentence.index(Img2SeqMain.SENTECEN_END_SYMBOL) + 1])
+            if Img2SeqMain.SENTENCE_END_SYMBOL in sentence:
+                sentences_cut_after_eos.append(sentence[:sentence.index(Img2SeqMain.SENTENCE_END_SYMBOL) + 1])
             else:
                 sentences_cut_after_eos.append(sentence)
 
         for sentence, image_id in zip(sentences_cut_after_eos, random_image_ids):
+
+            print(sentence)
+            print(self.loaded_data.val_id_to_caption_dict[image_id])
 
             bleu_score = nltk.translate.bleu_score.sentence_bleu(self.loaded_data.val_id_to_caption_dict[image_id], sentence)
 
