@@ -17,7 +17,7 @@ class Training():
         self.integer_to_word_dict = loaded_data.integer_to_word_dict
         self.word_to_integer_dict = {value: key for key, value in self.integer_to_word_dict.items()}
 
-    def train(self, data_partition=10000, batch_size=64, epochs=35):
+    def train(self, data_partition, batch_size, epochs, validation, validation_k):
 
         image_vectors, decoder_input, decoder_target = [], [], []
 
@@ -59,6 +59,9 @@ class Training():
                     pickle.dump(history_callback.history, result_dict)
                 save_load_utils.save_all_weights(self.actor, './save_model/actor_'+self.name+'.model')
 
+                if validation:
+                    self.validate(validation_k)
+
 
     def validate(self, k):
         # Test
@@ -87,9 +90,6 @@ class Training():
                 sentences_cut_after_eos.append(sentence)
 
         for sentence, image_id in zip(sentences_cut_after_eos, random_image_ids):
-
-            print(sentence)
-            print(self.loaded_data.val_id_to_caption_dict[image_id])
 
             bleu_score = nltk.translate.bleu_score.sentence_bleu(self.loaded_data.val_id_to_caption_dict[image_id], sentence)
 

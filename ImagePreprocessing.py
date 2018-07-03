@@ -58,17 +58,15 @@ def get_id_to_caption_dict(path):
     return id_to_caption
 
 
-model = get_vgg16_model()
-#validation data
-id_to_path_dict = get_image_paths_and_names(r'./files/data/val2017')
-id_to_vector = get_id_to_vector_dict(id_to_path_dict, model)
-save_dict(id_to_vector, './save_model/id_to_vector_val.dict')
-id_to_caption = get_id_to_caption_dict(r'./files/data/annotations/captions_val2017.json')
-save_dict(id_to_caption, './save_model/id_to_caption_val.dict')
+def create_captions_and_image_vectors(data = '../Image2SequenceFiles/data', save_loc =  '../Image2SequenceFiles/dictionaries', dataset='train'):
+    model = get_vgg16_model()
+    #captions
+    id_to_caption_dict = get_id_to_caption_dict(data+'/annotations/captions_'+dataset+'2017.json')
+    save_dict(id_to_caption_dict, save_loc+'/id_to_caption_'+dataset+'.dict')
+    #image vectors
+    id_to_path_to_image_dict = get_image_paths_and_names(data+'/'+dataset+'2017')
+    id_to_image_vector_dict = get_id_to_vector_dict(id_to_path_to_image_dict, model)
+    save_dict(id_to_image_vector_dict, save_loc+'/id_to_vector_'+dataset+'.dict')
 
-# id_to_path_dict = get_image_paths_and_names(r'.\files\data\train2017')
-# id_to_vector = get_id_to_vector_dict(id_to_path_dict, model)
-# save_dict(id_to_vector, './save_model/id_to_vector_train.dict')
-# id_to_caption = get_id_to_caption_dict(r'.\files\data\annotations\captions_train2017.json')
-# save_dict(id_to_caption, './save_model/id_to_caption_train.dict')
+    return id_to_image_vector_dict, id_to_caption_dict
 
