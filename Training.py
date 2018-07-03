@@ -55,7 +55,7 @@ class Training():
                 history_callback = self.actor.fit([np.array(image_vectors), np.array(decoder_input)], np.array(decoder_target), verbose=0, batch_size=batch_size, epochs = epochs)
                 image_vectors, decoder_input, decoder_target = [], [], []
 
-                with open('./save_graph/seq2seq_scores_'+str(no)+'.bin', 'wb') as result_dict:
+                with open('./save_stats/seq2seq_scores_'+str(no)+'.bin', 'wb') as result_dict:
                     pickle.dump(history_callback.history, result_dict)
                 save_load_utils.save_all_weights(self.actor, './save_model/actor_'+self.name+'.model')
 
