@@ -38,14 +38,14 @@ class LoadData:
             self.train_id_to_image_vector_dict, self.train_id_to_caption_dict = self.get_image_and_caption_dicts(dataset='train')
             #all id's of all images
             self.list_of_train_image_ids = list(self.train_id_to_image_vector_dict.keys())
-            self.train_id_to_embedded_captions = self.get_id_to_embedded_captions('./save_model', w2v_model_name, 'train')
+            self.train_id_to_embedded_captions = self.get_id_to_embedded_captions('../Image2SequenceFiles/dictionaries', w2v_model_name, 'train')
             print('No of training sentences:' + str(len(self.train_id_to_embedded_captions)))
 
         if val_dataset:
             #Same for Validation Data
             self.val_id_to_image_vector_dict, self.val_id_to_caption_dict = self.get_image_and_caption_dicts(dataset='val')
             self.list_of_val_image_ids = list(self.val_id_to_image_vector_dict.keys())
-            self.val_id_to_embedded_captions = self.get_id_to_embedded_captions('./save_model', w2v_model_name, 'val')
+            self.val_id_to_embedded_captions = self.get_id_to_embedded_captions('../Image2SequenceFiles/dictionaries', w2v_model_name, 'val')
             print('No of validation sentences:' + str(len(self.val_id_to_embedded_captions)))
 
         #dictionary mapping all words to integers

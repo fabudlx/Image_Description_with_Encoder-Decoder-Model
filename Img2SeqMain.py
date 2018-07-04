@@ -55,12 +55,12 @@ if __name__ == "__main__":
     train_epochs = 35
 
     val_dataset = True
-    val_k = 30
+    val_k = 50
     w2vModel = 0
 
     agent = Agent(name, train_dataset, val_dataset, w2vModel)
 
     # agent.load_actor(r'./save_model/actor_Seq2seq.model')
 
-    agent.train_model(epochs=train_epochs, validation=True, validation_k=val_k)
-    # agent.validate_model()
+    # agent.train_model(epochs=train_epochs, validation=True, validation_k=val_k)
+    agent.validate_model(val_k)

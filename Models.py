@@ -39,7 +39,3 @@ def build_actor_model(state_space, action_size, image_vector_size):
     model.summary()
 
     return model
-
-def plot():
-    model = build_actor_model([16,300], 7820, 4096)
-    plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=False)

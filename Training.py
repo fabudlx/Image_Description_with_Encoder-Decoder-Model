@@ -91,6 +91,8 @@ class Training():
 
         for sentence, image_id in zip(sentences_cut_after_eos, random_image_ids):
 
+            print(sentence)
+            print(self.loaded_data.val_id_to_caption_dict[image_id])
             bleu_score = nltk.translate.bleu_score.sentence_bleu(self.loaded_data.val_id_to_caption_dict[image_id], sentence)
 
             print('Image ' + str(image_id) + ': ' + ' '.join(sentence)+' BLEU Score: '+str(bleu_score))
