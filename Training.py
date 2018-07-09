@@ -11,12 +11,14 @@ logger = logging.getLogger("_logger_")
 class Training():
     def __init__(self, actor, loaded_data, name, result_folder):
 
-        self.history_folder = history_folder = os.path.join(self.result_folder, 'training_history')
+
 
         self.actor = actor
         self.loaded_data = loaded_data
         self.name = name
+
         self.result_folder = result_folder
+        self.history_folder = history_folder = os.path.join(self.result_folder, 'training_history')
 
         #dictionary mapping either words to interger values or vice-versa
         self.integer_to_word_dict = loaded_data.integer_to_word_dict
