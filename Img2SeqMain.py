@@ -20,6 +20,10 @@ UNKNOWN_SYMBOL = 'ukn'
 
 logger = logging.getLogger("tensorflow")
 
+stderrLogger = logging.StreamHandler()
+stderrLogger.setFormatter(logging.Formatter(logging.BASIC_FORMAT))
+logger.addHandler(stderrLogger)
+
 def log_exceptions(exctype, value, tb):
     logger.error("Uncaught exception", exc_info=(exctype, value, tb))
 
@@ -38,8 +42,9 @@ class Img2Seq:
 
         os.makedirs(self.result_folder)
 
+
+
         logging.basicConfig(level=logging.DEBUG,
-                            stream=sys.stdout,
                             format='%(asctime)s %(levelname)-8s %(message)s',
                             datefmt='%a, %d %b %Y %H:%M:%S',
                             filename=self.result_folder+'/info.log',
@@ -88,13 +93,20 @@ def save_model(model, name, result_folder):
 
 if __name__ == "__main__":
 
-    name = "normal-conf_40-epochs"
     train_dataset = True
     train_epochs = 4
 
     val_dataset = True
     val_k = 50
     w2vModel = 0
+
+    name = ''
+
+    if train_dataset:
+        name = name+str(train_epochs)+'_epochs_training'
+    if val_dataset:
+        name = name+str(val_k)+'_validation_images'
+    name = name+'_w2v-model_'+w2vModel
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
 
