@@ -68,7 +68,7 @@ class Training():
 
     def validate(self, k):
 
-        if k >= self.loaded_data.list_of_val_image_ids:
+        if k >= len(self.loaded_data.list_of_val_image_ids):
             image_ids_for_validation = self.loaded_data.list_of_val_image_ids
         else:
             image_ids_for_validation = random.sample(self.loaded_data.list_of_val_image_ids, k=k)

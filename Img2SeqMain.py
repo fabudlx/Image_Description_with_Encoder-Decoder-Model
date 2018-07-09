@@ -81,9 +81,9 @@ def save_model(model, name, result_folder):
 
 if __name__ == "__main__":
 
-    name = "Img2SeqTest01"
-    train_dataset = False
-    train_epochs = 35
+    name = "normal-conf_40-epochs"
+    train_dataset = True
+    train_epochs = 40
 
     val_dataset = True
     val_k = 5000
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
 
-    agent.load_actor('04072018-1630', name)
+    # agent.load_actor('04072018-1630', name)
 
-    # agent.train_model(epochs=train_epochs, validation=True, validation_k=val_k)
+    agent.train_model(epochs=train_epochs, validation=True, validation_k=25)
     agent.validate_model(val_k)
