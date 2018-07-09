@@ -123,17 +123,19 @@ def main():
     name = ''
 
     if train_dataset:
-        name = name+str(train_epochs)+'_epochs_training'
+        name = name+str(train_epochs)+'_tra_epos'
     if val_dataset:
-        name = name+'_'+str(val_epochs)+'_validation_images'
-    name = name+'_w2v-model_'+str(w2vModel)
+        name = name+'_'+str(val_epochs)+'_val_imgs'
+    name = name+'_'+str(w2vModel)+'_w2v'
+    name = name + '_' + str(data_partition) + 'dat_part'
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
 
     # agent.load_actor('04072018-1630', name)
-
-    agent.train_model(epochs=train_epochs, validation=True, validation_k=25, data_partition=data_partition)
-    agent.validate_model(val_epochs)
+    if train_dataset:
+        agent.train_model(epochs=train_epochs, validation=val_dataset, validation_k=val_epochs, data_partition=data_partition)
+    if val_dataset:
+        agent.validate_model(val_epochs)
 
 
 if __name__ == "__main__":
