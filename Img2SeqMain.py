@@ -63,7 +63,7 @@ class Img2Seq:
         with open(self.result_folder + '/model_config.bin', 'wb') as fh:
             pickle.dump(self.model.get_config(), fh)
 
-    def train_model(self, data_partition=10000, epochs=35, batch_size=64, validation=False, validation_k=30):
+    def train_model(self, data_partition=20000, epochs=35, batch_size=64, validation=False, validation_k=30):
         trainer = Training.Training(self.model, self.loaded_data, self.name, self.result_folder)
         trainer.train(data_partition=data_partition, batch_size=batch_size, epochs=epochs, validation=validation, validation_k=validation_k)
         save_model(self.model, self.name, self.result_folder)
