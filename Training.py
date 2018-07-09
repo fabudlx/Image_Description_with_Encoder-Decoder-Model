@@ -111,6 +111,9 @@ class Training():
             # "image_id" : int, "caption" : str,
             results.append({'image_id': image_id, 'caption': ' '.join(hypothesis)})
 
+        if not os.path.isdir(self.result_sentences_folder):
+            os.makedirs(self.result_sentences_folder)
+
         if no > 0:
             name = self.result_sentences_folder+'/results_after'+str(no)+'_images.json'
         else:
