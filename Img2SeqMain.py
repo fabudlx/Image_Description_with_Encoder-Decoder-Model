@@ -6,7 +6,7 @@ import Models
 import Training
 import logging
 import datetime
-import time
+import time, sys
 import pickle
 # global variables for threading
 EMBEDDING_SIZE = 300
@@ -19,6 +19,9 @@ UNKNOWN_SYMBOL = 'ukn'
 
 
 logger = logging.getLogger("_logger_")
+
+def log_exceptions(exctype, value, tb):
+    logger.error("Uncaught exception", exc_info=(exctype, value, tb))
 
 
 class Img2Seq:
@@ -40,6 +43,7 @@ class Img2Seq:
                             datefmt='%a, %d %b %Y %H:%M:%S',
                             filename=self.result_folder+'/info.log',
                             filemode='w')
+        sys.excepthook = log_exceptions
 
 
         self.loaded_data = LoadData.LoadData(w2v_model_number, SENTENCE_LENGTH, FREQUENCY_OF_WORDS_NEEDED, EMBEDDING_SIZE, train_dataset, val_dataset, self.result_folder)
@@ -83,10 +87,10 @@ if __name__ == "__main__":
 
     name = "normal-conf_40-epochs"
     train_dataset = True
-    train_epochs = 40
+    train_epochs = 4
 
     val_dataset = True
-    val_k = 5000
+    val_k = 50
     w2vModel = 0
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
