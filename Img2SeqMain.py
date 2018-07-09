@@ -18,7 +18,7 @@ SENTENCE_END_SYMBOL = '*E*'
 UNKNOWN_SYMBOL = 'ukn'
 
 
-logger = logging.getLogger("tensorflow")
+logger = logging.getLogger("_logger_")
 
 def log_exceptions(exctype, value, tb):
     logger.error("Uncaught exception", exc_info=(exctype, value, tb))
