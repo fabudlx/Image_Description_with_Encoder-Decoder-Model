@@ -115,6 +115,11 @@ def main():
     else:
         w2vModel = 0
 
+    if len(sys.argv) >= 5:
+        data_partition = int(sys.argv[4])
+    else:
+        data_partition = 20000
+
     name = ''
 
     if train_dataset:
@@ -127,7 +132,7 @@ def main():
 
     # agent.load_actor('04072018-1630', name)
 
-    agent.train_model(epochs=train_epochs, validation=True, validation_k=25)
+    agent.train_model(epochs=train_epochs, validation=True, validation_k=25, data_partition=data_partition)
     agent.validate_model(val_epochs)
 
 
