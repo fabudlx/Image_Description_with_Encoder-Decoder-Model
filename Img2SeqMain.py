@@ -20,10 +20,6 @@ UNKNOWN_SYMBOL = 'ukn'
 
 logger = logging.getLogger("tensorflow")
 
-stderrLogger = logging.StreamHandler()
-stderrLogger.setFormatter(logging.Formatter(logging.BASIC_FORMAT))
-logger.addHandler(stderrLogger)
-
 def log_exceptions(exctype, value, tb):
     logger.error("Uncaught exception", exc_info=(exctype, value, tb))
 
