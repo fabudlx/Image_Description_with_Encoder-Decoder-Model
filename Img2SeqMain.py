@@ -106,7 +106,7 @@ if __name__ == "__main__":
         name = name+str(train_epochs)+'_epochs_training'
     if val_dataset:
         name = name+str(val_k)+'_validation_images'
-    name = name+'_w2v-model_'+w2vModel
+    name = name+'_w2v-model_'+str(w2vModel)
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
 
