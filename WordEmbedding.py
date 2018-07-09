@@ -1,16 +1,16 @@
 import re
-
 import numpy as np
 from gensim.models.keyedvectors import KeyedVectors
+import logging
+
+logger = logging.getLogger("_logger_")
 
 class EmbeddingModel():
 
     def __init__(self, embedding_size, path = r'./files/w2vModel/wiki.en.vec',lower=False, binary=False):
-        print('loading '+path+' ... this could take a while')
         self.w2v_model = KeyedVectors.load_word2vec_format(path, binary=binary)
         self.lower = lower
         self.embedding_size = embedding_size
-        print('Model loaded, yeay :)')
 
     def get_embeddings(self, list_of_words, start_token=False, split_words=False):
         if self.lower:

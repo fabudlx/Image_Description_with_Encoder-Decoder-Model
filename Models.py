@@ -36,6 +36,4 @@ def build_actor_model(state_space, action_size, image_vector_size):
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model.summary()
-
     return model

@@ -3,15 +3,18 @@ from keras.utils import to_categorical
 import numpy as np
 import keras.preprocessing.sequence
 import pickle, nltk, random
-from keras_contrib.utils import save_load_utils
 import nltk.translate.bleu_score
+import logging, json
+
+logger = logging.getLogger("_logger_")
 
 class Training():
-    def __init__(self, actor, loaded_data, name):
+    def __init__(self, actor, loaded_data, name, result_folder):
 
         self.actor = actor
         self.loaded_data = loaded_data
         self.name = name
+        self.result_folder = result_folder
 
         #dictionary mapping either words to interger values or vice-versa
         self.integer_to_word_dict = loaded_data.integer_to_word_dict
@@ -55,18 +58,21 @@ class Training():
                 history_callback = self.actor.fit([np.array(image_vectors), np.array(decoder_input)], np.array(decoder_target), verbose=0, batch_size=batch_size, epochs = epochs)
                 image_vectors, decoder_input, decoder_target = [], [], []
 
-                with open('./save_stats/seq2seq_scores_'+str(no)+'.bin', 'wb') as result_dict:
+                with open(self.result_folder+'/training_history/history_'+str(no)+'.bin', 'wb') as result_dict:
                     pickle.dump(history_callback.history, result_dict)
-                save_load_utils.save_all_weights(self.actor, './save_model/actor_'+self.name+'.model')
+                Img2SeqMain.save_model(self.actor, self.name, self.result_folder)
 
                 if validation:
                     self.validate(validation_k)
 
 
     def validate(self, k):
-        # Test
-        random_image_ids = random.sample(self.loaded_data.list_of_val_image_ids, k=k)
-        test_image_vectors = np.array([self.loaded_data.val_id_to_image_vector_dict[image_id] for image_id in random_image_ids])
+
+        if k >= self.loaded_data.list_of_val_image_ids:
+            image_ids_for_validation = self.loaded_data.list_of_val_image_ids
+        else:
+            image_ids_for_validation = random.sample(self.loaded_data.list_of_val_image_ids, k=k)
+        test_image_vectors = np.array([self.loaded_data.val_id_to_image_vector_dict[image_id] for image_id in image_ids_for_validation])
         sentence_vectors = np.zeros((k, Img2SeqMain.SENTENCE_LENGTH, Img2SeqMain.EMBEDDING_SIZE))
         sentence_vectors[:, 0] = 1
         for i in range(Img2SeqMain.SENTENCE_LENGTH - 1):
@@ -85,14 +91,35 @@ class Training():
         sentences_cut_after_eos = []
         for sentence in predicted_sentences_as_words:
             if Img2SeqMain.SENTENCE_END_SYMBOL in sentence:
-                sentences_cut_after_eos.append(sentence[:sentence.index(Img2SeqMain.SENTENCE_END_SYMBOL) + 1])
+                sentences_cut_after_eos.append(sentence[:sentence.index(Img2SeqMain.SENTENCE_END_SYMBOL)])
             else:
                 sentences_cut_after_eos.append(sentence)
 
-        for sentence, image_id in zip(sentences_cut_after_eos, random_image_ids):
 
-            print(sentence)
-            print(self.loaded_data.val_id_to_caption_dict[image_id])
-            bleu_score = nltk.translate.bleu_score.sentence_bleu(self.loaded_data.val_id_to_caption_dict[image_id], sentence)
 
-            print('Image ' + str(image_id) + ': ' + ' '.join(sentence)+' BLEU Score: '+str(bleu_score))
+        # print(sentence)
+        # print(self.loaded_data.val_id_to_caption_dict[image_id])
+
+        # references = [[sentence.lower().split() for sentence in self.loaded_data.val_id_to_caption_dict[image_id]] for image_id in random_image_ids]
+        # print(nltk.translate.bleu_score.corpus_bleu(references, sentences_cut_after_eos))
+
+
+
+        results = []
+        for hypothesis, image_id in zip(sentences_cut_after_eos, image_ids_for_validation):
+
+            # "image_id" : int, "caption" : str,
+            results.append({'image_id': image_id, 'caption': ' '.join(hypothesis)})
+
+        # print(results)
+
+        with open(self.result_folder+'/results.json', 'w') as fp:
+            json.dump(results, fp)
+
+
+        #
+        #     bleu1 = nltk.translate.bleu_score.sentence_bleu(references, hypothesis, weights=(1, 0, 0, 0))
+        #     bleu2 = nltk.translate.bleu_score.sentence_bleu(references, hypothesis, weights=(0.5, 0.5, 0, 0))
+        #     bleu3 = nltk.translate.bleu_score.sentence_bleu(references, hypothesis, weights=(0.33, 0.33, 0.33, 0))
+        #     bleu4 = nltk.translate.bleu_score.sentence_bleu(references, hypothesis, weights=(0.25, 0.25, 0.25, 0.25))
+        #     logger.info('Image ' + str(image_id) + ': ' + ' '.join(hypothesis)+' BLEU-1 Score: '+str(bleu1)+' BLEU-2 Score: '+str(bleu2)+' BLEU-3 Score: '+str(bleu3)+' BLEU-4 Score: '+str(bleu4))
