@@ -18,7 +18,8 @@ class Training():
         self.name = name
 
         self.result_folder = result_folder
-        self.history_folder = history_folder = os.path.join(self.result_folder, 'training_history')
+        self.history_folder = os.path.join(self.result_folder, 'training_history')
+        self.result_sentences_folder = os.path.join(self.result_folder, 'training_results')
 
         #dictionary mapping either words to interger values or vice-versa
         self.integer_to_word_dict = loaded_data.integer_to_word_dict
@@ -104,8 +105,6 @@ class Training():
             else:
                 sentences_cut_after_eos.append(sentence)
 
-        logger.info(sentences_cut_after_eos)
-
         results = []
         for hypothesis, image_id in zip(sentences_cut_after_eos, image_ids_for_validation):
 
@@ -113,9 +112,9 @@ class Training():
             results.append({'image_id': image_id, 'caption': ' '.join(hypothesis)})
 
         if no > 0:
-            name = self.result_folder+'/results_after'+str(no)+'_images.json'
+            name = self.result_sentences_folder+'/results_after'+str(no)+'_images.json'
         else:
-            name = self.result_folder+'/final_results.json'
+            name = self.result_sentences_folder+'/final_results.json'
 
         with open(name, 'w') as fp:
             json.dump(results, fp)

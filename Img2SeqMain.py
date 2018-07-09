@@ -87,21 +87,40 @@ def save_model(model, name, result_folder):
     logger.info('saving model under '+path)
 
 
-if __name__ == "__main__":
 
-    train_dataset = True
-    train_epochs = 4
+def main():
 
-    val_dataset = True
-    val_k = 50
-    w2vModel = 0
+    if len(sys.argv) >= 2:
+        train_epochs = int(sys.argv[1])
+        if train_epochs > 0:
+            train_dataset = True
+        else:
+            train_dataset = False
+    else:
+        train_epochs=10
+        train_dataset = True
+
+    if len(sys.argv) >= 3:
+        val_epochs = int(sys.argv[2])
+        if val_epochs > 0:
+            val_dataset = True
+        else:
+            val_dataset = False
+    else:
+        val_epochs = 50
+        val_dataset = True
+
+    if len(sys.argv) >= 4:
+        w2vModel = int(sys.argv[3])
+    else:
+        w2vModel = 0
 
     name = ''
 
     if train_dataset:
         name = name+str(train_epochs)+'_epochs_training'
     if val_dataset:
-        name = name+str(val_k)+'_validation_images'
+        name = name+'_'+str(val_epochs)+'_validation_images'
     name = name+'_w2v-model_'+str(w2vModel)
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
@@ -109,4 +128,8 @@ if __name__ == "__main__":
     # agent.load_actor('04072018-1630', name)
 
     agent.train_model(epochs=train_epochs, validation=True, validation_k=25)
-    agent.validate_model(val_k)
+    agent.validate_model(val_epochs)
+
+
+if __name__ == "__main__":
+    main()
