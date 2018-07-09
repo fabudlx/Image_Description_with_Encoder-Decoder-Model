@@ -4,7 +4,7 @@ import numpy as np
 import keras.preprocessing.sequence
 import pickle, nltk, random
 import nltk.translate.bleu_score
-import logging, json
+import logging, json, os
 
 logger = logging.getLogger("_logger_")
 
