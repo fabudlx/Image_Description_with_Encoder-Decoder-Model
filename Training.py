@@ -49,11 +49,11 @@ class Training():
                 # print(self.actor.predict([np.array(image_vectors), np.array(decoder_input)]))
 
             if no is not 0 and no % 1000 == 0:
-                print(str(len(image_vectors))+' samples have been created')
+                logging.info(str(len(image_vectors))+' samples have been created')
 
             if no is not 0 and no % data_partition == 0:
                 decoder_target = keras.preprocessing.sequence.pad_sequences(decoder_target, maxlen=Img2SeqMain.SENTENCE_LENGTH, dtype='int16', padding='post', truncating='post', value=0)
-                print(str(len(image_vectors))+' samples have been created, Actor will be trained for '+str(epochs)+' epochs, with batch_size of '+str(batch_size))
+                logging.info(str(len(image_vectors))+' samples have been created, Actor will be trained for '+str(epochs)+' epochs, with batch_size of '+str(batch_size))
                 # verbose: Integer. 0, 1, or 2. Verbosity mode. 0 = silent, 1 = progress bar, 2 = one line per epoch.
                 history_callback = self.actor.fit([np.array(image_vectors), np.array(decoder_input)], np.array(decoder_target), verbose=0, batch_size=batch_size, epochs = epochs)
                 image_vectors, decoder_input, decoder_target = [], [], []
@@ -95,15 +95,7 @@ class Training():
             else:
                 sentences_cut_after_eos.append(sentence)
 
-
-
-        # print(sentence)
-        # print(self.loaded_data.val_id_to_caption_dict[image_id])
-
-        # references = [[sentence.lower().split() for sentence in self.loaded_data.val_id_to_caption_dict[image_id]] for image_id in random_image_ids]
-        # print(nltk.translate.bleu_score.corpus_bleu(references, sentences_cut_after_eos))
-
-
+        logging.info(sentences_cut_after_eos)
 
         results = []
         for hypothesis, image_id in zip(sentences_cut_after_eos, image_ids_for_validation):

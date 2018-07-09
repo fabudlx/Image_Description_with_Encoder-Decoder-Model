@@ -76,7 +76,7 @@ class Img2Seq:
             logger.info('Weights from '+path+' could NOT be found and loaded')
 
 def save_model(model, name, result_folder):
-    save_load_utils.save_all_weights(model, result_folder + name + '.model')
+    save_load_utils.save_all_weights(model, os.path.join(result_folder, name + '.model'))
 
 
 if __name__ == "__main__":
