@@ -18,7 +18,7 @@ SENTENCE_END_SYMBOL = '*E*'
 UNKNOWN_SYMBOL = 'ukn'
 
 
-logger = logging.getLogger("_logger_")
+logger = logging.getLogger("tensorflow")
 
 def log_exceptions(exctype, value, tb):
     logger.error("Uncaught exception", exc_info=(exctype, value, tb))
@@ -39,6 +39,7 @@ class Img2Seq:
         os.makedirs(self.result_folder)
 
         logging.basicConfig(level=logging.DEBUG,
+                            stream=sys.stdout,
                             format='%(asctime)s %(levelname)-8s %(message)s',
                             datefmt='%a, %d %b %Y %H:%M:%S',
                             filename=self.result_folder+'/info.log',
@@ -80,7 +81,9 @@ class Img2Seq:
             logger.info('Weights from '+path+' could NOT be found and loaded')
 
 def save_model(model, name, result_folder):
-    save_load_utils.save_all_weights(model, os.path.join(result_folder, name + '.model'))
+    path = os.path.join(result_folder, name + '.model')
+    save_load_utils.save_all_weights(model, path)
+    logger.info('saving model under '+path)
 
 
 if __name__ == "__main__":

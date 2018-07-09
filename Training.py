@@ -11,6 +11,8 @@ logger = logging.getLogger("_logger_")
 class Training():
     def __init__(self, actor, loaded_data, name, result_folder):
 
+        self.history_folder = history_folder = os.path.join(self.result_folder, 'training_history')
+
         self.actor = actor
         self.loaded_data = loaded_data
         self.name = name
@@ -49,24 +51,29 @@ class Training():
                 # print(self.actor.predict([np.array(image_vectors), np.array(decoder_input)]))
 
             if no is not 0 and no % 1000 == 0:
-                logging.info(str(len(image_vectors))+' samples have been created')
+                logger.info(str(len(image_vectors))+' samples have been created')
 
             if no is not 0 and no % data_partition == 0:
                 decoder_target = keras.preprocessing.sequence.pad_sequences(decoder_target, maxlen=Img2SeqMain.SENTENCE_LENGTH, dtype='int16', padding='post', truncating='post', value=0)
-                logging.info(str(len(image_vectors))+' samples have been created, Actor will be trained for '+str(epochs)+' epochs, with batch_size of '+str(batch_size))
+                logger.info(str(len(image_vectors))+' samples have been created, Actor will be trained for '+str(epochs)+' epochs, with batch_size of '+str(batch_size))
                 # verbose: Integer. 0, 1, or 2. Verbosity mode. 0 = silent, 1 = progress bar, 2 = one line per epoch.
                 history_callback = self.actor.fit([np.array(image_vectors), np.array(decoder_input)], np.array(decoder_target), verbose=0, batch_size=batch_size, epochs = epochs)
                 image_vectors, decoder_input, decoder_target = [], [], []
 
-                with open(self.result_folder+'/training_history/history_'+str(no)+'.bin', 'wb') as result_dict:
+                if not os.path.isdir(self.history_folder):
+                    os.makedirs(self.history_folder)
+
+                history_file = os.path.join(self.history_folder, 'history_'+str(no)+'.history')
+                with open(history_file, 'wb') as result_dict:
                     pickle.dump(history_callback.history, result_dict)
+                    logger.info('saving history under '+ history_file)
                 Img2SeqMain.save_model(self.actor, self.name, self.result_folder)
 
                 if validation:
-                    self.validate(validation_k)
+                    self.validate(validation_k, no)
 
 
-    def validate(self, k):
+    def validate(self, k, no = -1):
 
         if k >= len(self.loaded_data.list_of_val_image_ids):
             image_ids_for_validation = self.loaded_data.list_of_val_image_ids
@@ -95,7 +102,7 @@ class Training():
             else:
                 sentences_cut_after_eos.append(sentence)
 
-        logging.info(sentences_cut_after_eos)
+        logger.info(sentences_cut_after_eos)
 
         results = []
         for hypothesis, image_id in zip(sentences_cut_after_eos, image_ids_for_validation):
@@ -103,10 +110,14 @@ class Training():
             # "image_id" : int, "caption" : str,
             results.append({'image_id': image_id, 'caption': ' '.join(hypothesis)})
 
-        # print(results)
+        if no > 0:
+            name = self.result_folder+'/results_after'+str(no)+'_images.json'
+        else:
+            name = self.result_folder+'/final_results.json'
 
-        with open(self.result_folder+'/results.json', 'w') as fp:
+        with open(name, 'w') as fp:
             json.dump(results, fp)
+            logger.info('saving results for '+str(k) +' images under '+name)
 
 
         #
