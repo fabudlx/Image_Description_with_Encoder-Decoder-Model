@@ -68,7 +68,7 @@ class Training():
 
                 history_file = os.path.join(self.history_folder, 'history_'+str(no)+'.history')
                 with open(history_file, 'wb') as result_dict:
-                    pickle.dump(history_callback.history, result_dict)
+                    pickle.dump(history_callback.history, result_dict, protocol=2)
                     logger.info('saving history under '+ history_file)
                 Img2SeqMain.save_model(self.actor, self.name, self.result_folder)
 
@@ -120,7 +120,7 @@ class Training():
             name = self.result_sentences_folder+'/final_results.json'
 
         with open(name, 'w') as fp:
-            json.dump(results, fp)
+            json.dump(results, fp, protocol=2)
             logger.info('saving results for '+str(k) +' images under '+name)
 
 

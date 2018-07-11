@@ -61,7 +61,7 @@ class Img2Seq:
         with open(self.result_folder + '/model_architecture.txt', 'w') as fh:
             self.model.summary(print_fn=lambda x: fh.write(x + '\n'))
         with open(self.result_folder + '/model_config.bin', 'wb') as fh:
-            pickle.dump(self.model.get_config(), fh)
+            pickle.dump(self.model.get_config(), fh, protocol=2)
 
     def train_model(self, data_partition=20000, epochs=35, batch_size=64, validation=False, validation_k=30):
         trainer = Training.Training(self.model, self.loaded_data, self.name, self.result_folder)
