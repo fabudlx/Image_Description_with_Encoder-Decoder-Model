@@ -48,7 +48,7 @@ class Img2Seq:
         sys.excepthook = log_exceptions
 
 
-        self.loaded_data = LoadData.LoadData(w2v_model_number, SENTENCE_LENGTH, FREQUENCY_OF_WORDS_NEEDED, EMBEDDING_SIZE, train_dataset, val_dataset, self.result_folder)
+        self.loaded_data = LoadData.LoadData(w2v_model_number, train_dataset, val_dataset, self.result_folder)
 
         # get size of state and action, and inputs
         self.state_space = [SENTENCE_LENGTH, EMBEDDING_SIZE]
@@ -123,11 +123,10 @@ def main():
     name = ''
 
     if train_dataset:
-        name = name+str(train_epochs)+'_tra_epos'
-    if val_dataset:
-        name = name+'_'+str(val_epochs)+'_val_imgs'
-    name = name+'_'+str(w2vModel)+'_w2v'
-    name = name + '_' + str(data_partition) + 'dat_part'
+        name = name+str(train_epochs)+'-tra_epos'
+    name = name+'_'+str(w2vModel)+'-w2v'
+    name = name + '_' + str(data_partition) + '-dat_part'
+    name = name + '_' + str(SENTENCE_LENGTH) + '-length'
 
     agent = Img2Seq(name, train_dataset, val_dataset, w2vModel)
 

@@ -6,33 +6,29 @@ from collections import defaultdict
 from WordEmbedding import EmbeddingModel
 from ImagePreprocessing import create_captions_and_image_vectors
 import logging
-from Img2SeqMain import SENTENCE_END_SYMBOL, SENTENCE_START_SYMBOL, UNKNOWN_SYMBOL
+from Img2SeqMain import SENTENCE_END_SYMBOL, SENTENCE_START_SYMBOL, UNKNOWN_SYMBOL, SENTENCE_LENGTH, FREQUENCY_OF_WORDS_NEEDED, EMBEDDING_SIZE
 
 logger = logging.getLogger("_logger_")
 
-def load_w2v(model_name, embedding_size):
+def load_w2v(model_name):
     if model_name is 0:
-        w2v_class = EmbeddingModel(embedding_size, path=r'../Image2SequenceFiles/w2vModel/wiki-news-300d-1M-subword.vec', lower=True, binary=False)
+        w2v_class = EmbeddingModel(EMBEDDING_SIZE, path=r'../Image2SequenceFiles/w2vModel/wiki-news-300d-1M-subword.vec', lower=True, binary=False)
         return w2v_class, 'fasttext'
     elif model_name is 1:
-        w2v_class = EmbeddingModel(embedding_size, path=r'../Image2SequenceFiles/w2vModel/crawl-300d-2M.vec', lower=True, binary=False)
+        w2v_class = EmbeddingModel(EMBEDDING_SIZE, path=r'../Image2SequenceFiles/w2vModel/crawl-300d-2M.vec', lower=True, binary=False)
         return w2v_class, 'fasttext_crawl'
     else:
-        w2v_class = EmbeddingModel(embedding_size, r'../Image2SequenceFiles/w2vModel/en.wiki.bpe.op200000.d300.w2v.bin', lower=True, binary=True)
+        w2v_class = EmbeddingModel(EMBEDDING_SIZE, r'../Image2SequenceFiles/w2vModel/en.wiki.bpe.op200000.d300.w2v.bin', lower=True, binary=True)
         return w2v_class, 'bpe'
 
 class LoadData:
 
-    def __init__(self, w2v_model_number, sentence_length, frequency_of_words_needed, embedding_size, train_dataset, val_dataset, result_folder):
+    def __init__(self, w2v_model_number, train_dataset, val_dataset, result_folder):
 
         self.result_folder = result_folder
 
-        self.sentence_length = sentence_length
-        self.frequency_of_words_needed = frequency_of_words_needed
-        self.embedding_size = embedding_size
-
         #load word to vector model
-        self.w2v_class, w2v_model_name = load_w2v(w2v_model_number, self.embedding_size)
+        self.w2v_class, w2v_model_name = load_w2v(w2v_model_number)
 
 
         if train_dataset:
@@ -83,7 +79,7 @@ class LoadData:
 
     def get_actions(self, train_dataset_is_there):
 
-        path = r'../Image2SequenceFiles/dictionaries/integer_to_words_' + str(self.frequency_of_words_needed) + '.dict'
+        path = r'../Image2SequenceFiles/dictionaries/integer_to_words_' + str(FREQUENCY_OF_WORDS_NEEDED) + '.dict'
 
         if os.path.isfile(path):
             with open(path, 'rb') as file:
@@ -98,7 +94,7 @@ class LoadData:
             all_tokens = [token for sentence in all_captions for token in sentence]
             counter = Counter(all_tokens)
             # removing all words that are not in the reduced counter -> having a lower frequency than FREQUENCY_OF_WORDS_NEEDED
-            reduced_counter = {word: value for word, value in counter.items() if value > self.frequency_of_words_needed}
+            reduced_counter = {word: value for word, value in counter.items() if value > FREQUENCY_OF_WORDS_NEEDED}
 
             # integer encode
             list_of_words = list(reduced_counter.keys())
@@ -109,28 +105,30 @@ class LoadData:
             integer_to_word_dict[len(integer_to_word_dict)] = SENTENCE_END_SYMBOL #len(integer_to_word_dict) -2
             integer_to_word_dict[len(integer_to_word_dict)] = UNKNOWN_SYMBOL #len(integer_to_word_dict) -1
 
-            logger.info("Corpus contains " + str(len(all_captions)) + " sentences.\n")
-            logger.info("\nReading corpus: accepting every word with at least a frequency of " + str(self.frequency_of_words_needed) + " yields " + str(len(reduced_counter)) + " words/actions.\n")
+            logger.info("Corpus contains " + str(len(all_captions)) + " sentences.")
+            logger.info("Reading corpus: accepting every word with at least a frequency of " + str(FREQUENCY_OF_WORDS_NEEDED) + " yields " + str(len(reduced_counter)) + " words/actions.\n")
 
             with open(path, 'wb') as file:
                 pickle.dump(integer_to_word_dict, file)
 
         return integer_to_word_dict
 
-    def get_id_to_embedded_captions(self, folder, w2v_model_name, dataset):
+    def get_id_to_embedded_captions(self, folder, w2v_model_name, dataset_name):
 
-        path = folder + '/id_to_embedded_captions_' + w2v_model_name + '_' + dataset + '_' + str(self.sentence_length) + '_' + str(self.embedding_size) + '.dict'
-
+        path = folder + '/id_to_embedded_captions_' + w2v_model_name + '_' + dataset_name + '_' + str(SENTENCE_LENGTH) + '_' + str(EMBEDDING_SIZE) + '.dict'
+        average_sentence_length = 0
+        no_of_sentences = 0
+        max_sentence_length = 0
         if os.path.isfile(path):
             logger.info('Found ID_to_Embedding file '+path+'. Loading file now!')
             with open(path, 'rb') as file:
                 id_to_embedded_captions = pickle.loads(file.read())
         else:
-            logger.info('NO file found under' + path + '\nCreating file now')
+            logger.info('NO file found under' + path + ' -> Creating file now')
             id_to_embedded_captions = defaultdict(list)
-            if dataset == 'train':
+            if dataset_name == 'train':
                 id_to_caption_dict = self.train_id_to_caption_dict
-            elif dataset == 'val':
+            elif dataset_name == 'val':
                 id_to_caption_dict = self.val_id_to_caption_dict
             else:
                 return
@@ -140,7 +138,17 @@ class LoadData:
                     tokenized_caption = nltk.word_tokenize(caption)
                     embedded_captions_list.append(self.w2v_class.get_embeddings(tokenized_caption, start_token=True, split_words=True))
 
-                id_to_embedded_captions[image_id] = keras.preprocessing.sequence.pad_sequences(embedded_captions_list, maxlen=self.sentence_length, dtype='float32', padding='post', truncating='post', value=0.)
+                    if len(tokenized_caption) > max_sentence_length:
+                        max_sentence_length = len(tokenized_caption)
+                    average_sentence_length += len(tokenized_caption)
+                    no_of_sentences += 1
+
+                id_to_embedded_captions[image_id] = keras.preprocessing.sequence.pad_sequences(embedded_captions_list, maxlen=SENTENCE_LENGTH, dtype='float32', padding='post', truncating='post', value=0.)
+
+            average_sentence_length /= no_of_sentences
+
+
+            logger.info('The maximum sentence length is '+str(max_sentence_length)+'. The average sentence length is '+str(average_sentence_length))
             logger.info('ID_to_Embedding dictionary has been created. Saving now under ' + path)
             with open(path, 'wb') as file:
                 pickle.dump(id_to_embedded_captions, file, protocol=4)
