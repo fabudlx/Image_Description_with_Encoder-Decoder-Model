@@ -22,15 +22,17 @@ def build_actor_model(state_space, action_size, image_vector_size):
 
     lstm = LSTM(1024, return_sequences=True)(merger)
 
-    dropout = Dropout(0.3)(lstm)
+    dropout = Dropout(0.4)(lstm)
 
     lstm1 = LSTM(1024, return_sequences=True)(dropout)
 
-    dropout2 = Dropout(0.3)(lstm1)
+    dropout2 = Dropout(0.4)(lstm1)
 
     dense = Dense(2048, activation='relu', kernel_initializer='glorot_uniform')(dropout2)
 
-    activation = Dense(action_size, activation='softmax')(dense)
+    dropout3 = Dropout(0.4)(dense)
+
+    activation = Dense(action_size, activation='softmax')(dropout3)
 
     model = Model([image_input, sentence_input], activation)
 

@@ -107,7 +107,7 @@ def main():
         else:
             val_dataset = False
     else:
-        val_epochs = 50
+        val_epochs = 5000
         val_dataset = True
 
     if len(sys.argv) >= 4:
