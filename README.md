@@ -1,14 +1,22 @@
-# Image2Sequence
+# Autoamated Image Description with Encoder-Decoder-Model
 
-Automated Image Description System with stacked LSTMs
+Automated Image Description System that uses classic encoder (CNN+LSTM) decoder (stacked LSTM) model to generate appropriate descriptions for images
 
 ### Study
 
-This implementation is part of a Independent Study, done at the University of Hamburg, under the Department of Language Technology.
+This implementation is part of a Independent Study, done at the University of Hamburg, under the Department of Language Technology. The architecture is inspired by https://github.com/anuragmishracse/caption_generator! Thanks goes to Anurag Mishra for that.
 
 ### Prerequisites
 
 clone https://github.com/fabudlx/Image2SequenceFiles.git next to this project and go to the data and w2vModel folder. Follow the instructions to get the MS COCO 2017 dataset and the fasttext word embedding model.
+
+### Dataset and pretrained models
+
+MS COCO 2017 was used for training and validation
+
+English fasttest word embedding was used to embedd the sentences
+
+Pretrained VGG16 was used to embedd the images into image vectors
 
 
 ### Model
